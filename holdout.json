@@ -1,0 +1,157 @@
+[
+  {
+    "text": "I need someone to buy 5 shirts from the market for me,this evening",
+    "expected": {
+      "task_type": "shopping",
+      "items": [
+        {
+          "name": "shirts",
+          "quantity": 5,
+          "unit": null
+        }
+      ],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": "this evening",
+      "confidence": 0.75,
+      "missing": [
+        "pickup_location"
+      ]
+    }
+  },
+  {
+    "text": "pls my kitchen tap is leaking,i need a plumber today",
+    "expected": {
+      "task_type": "repair",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "today",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "person wey go wash cloth for me,e plenty sha",
+    "expected": {
+      "task_type": "laundry",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
+    }
+  },
+  {
+    "text": "Someone to come and clean my house thoroughly wednesday morning",
+    "expected": {
+      "task_type": "cleaning",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "wednesday morning",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "i need someone to pick my 6 cartons of drinks from the park this afternoon",
+    "expected": {
+      "task_type": "delivery",
+      "items": [
+        {
+          "name": "drinks",
+          "quantity": 6,
+          "unit": "cartons"
+        }
+      ],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": "this afternoon",
+      "confidence": 0.5,
+      "missing": [
+        "pickup_location",
+        "dropoff_location"
+      ]
+    }
+  },
+  {
+    "text": "My car just broke down on third mainland bridge",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
+    }
+  },
+  {
+    "text": "Someone to come and clean my office thoroughly tuesday morning",
+    "expected": {
+      "task_type": "cleaning",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "tuesday morning",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "pls my toilet is leaking,i need a plumber today",
+    "expected": {
+      "task_type": "repair",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "today",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "person wey go wash curtain for me,e plenty sha",
+    "expected": {
+      "task_type": "laundry",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
+    }
+  },
+  {
+    "text": "My bus just broke down on third mainland bridge",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
+    }
+  }
+]
