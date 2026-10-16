@@ -3,10 +3,19 @@
     "text": "I need 3 bags of rice from Mile 3 delivered to my house by evening",
     "expected": {
       "task_type": "shopping",
-      "items": [{"name": "rice", "quantity": 3, "unit": "bags"}],
+      "items": [
+        {
+          "name": "rice",
+          "quantity": 3,
+          "unit": "bags"
+        }
+      ],
       "pickup_location": "Mile 3",
+      "dropoff_location": null,
       "delivery_required": true,
-      "deadline": "evening"
+      "deadline": "evening",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
@@ -15,8 +24,11 @@
       "task_type": "laundry",
       "items": [],
       "pickup_location": null,
+      "dropoff_location": null,
       "delivery_required": false,
-      "deadline": "tomorrow morning"
+      "deadline": "tomorrow morning",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
@@ -25,138 +37,298 @@
       "task_type": "repair",
       "items": [],
       "pickup_location": null,
+      "dropoff_location": null,
       "delivery_required": false,
-      "deadline": "today"
+      "deadline": "today",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
     "text": "Pick up a parcel at Rumuola and drop it at Garrison before 5pm",
     "expected": {
       "task_type": "delivery",
-      "items": [{"name": "parcel", "quantity": 1, "unit": null}],
+      "items": [
+        {
+          "name": "parcel",
+          "quantity": 1,
+          "unit": null
+        }
+      ],
       "pickup_location": "Rumuola",
+      "dropoff_location": "Garrison",
       "delivery_required": true,
-      "deadline": "before 5pm"
+      "deadline": "before 5pm",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
     "text": "I need someone to help me cut my son's hair today",
     "expected": {
-        "task_type": "service",
-        "items": [],
-        "pickup_location": null,
-        "delivery_required": false,
-        "deadline":"before 3pm"
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "today",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
     "text": "Someone to go the market for me and buy 10 crates of eggs",
-    "expected":{
-        "task_type": "shopping",
-        "items":[{"name" : "crates", "quantity": 10, "unit": null}],
-        "pickup_location": "Rumumasi Market",
-        "delivery_required": true,
-        "deadline":"tomorrow morning"
+    "expected": {
+      "task_type": "shopping",
+      "items": [
+        {
+          "name": "eggs",
+          "quantity": 10,
+          "unit": "crates"
+        }
+      ],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": null,
+      "confidence": 0.5,
+      "missing": [
+        "pickup_location",
+        "deadline"
+      ]
     }
   },
   {
-    "text":"Help me move my furniture into a moving Van on friday morning",
-    "expected":{
-        "task_type": "other",
-        "items":[],
-        "pickup_location":null,
-        "delivery_required": false,
-        "deadline":"friday afternoon"
+    "text": "Help me move my furniture into a moving Van on friday morning",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "friday morning",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
-    "text":"Create a website for me",
-    "expected":{
-        "task_type": "website creation",
-        "items":[],
-        "pickup_location":null,
-        "delivery_required":false,
-        "deadline": "2 weeks"
+    "text": "Create a website for me",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
     }
   },
   {
     "text": "I need someone to do the wiring in my home",
-    "expected":{
-        "task_type": "electrical",
-        "items":[],
-        "pickup_location": "Okoa close",
-        "delivery_required":false,
-        "deadline":"evening"
+    "expected": {
+      "task_type": "repair",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
     }
   },
   {
-    "text":"Need an interior decorator to organise my shop",
-    "expected":{
-        "task_type":"service",
-        "items":[],
-        "pickup_location": "Amadi street,Boricamp",
-        "delivery_required":false,
-        "deadline":"friday afternoon"
+    "text": "Need an interior decorator to organise my shop",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
     }
   },
   {
-    "text":"my toilet dey overflow, need plumber today",
-    "expected":{
-        "task_type":"repair",
-        "items":[],
-        "pickup_location":null,
-        "delivery_required":false,
-        "deadline":"today"
+    "text": "my toilet dey overflow, need plumber today",
+    "expected": {
+      "task_type": "repair",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "today",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
-    "text":"pls come wash my hair tomorrow morning, you go make am too",
-    "expected":{
-        "task_type":"service",
-        "items":[],
-        "pickup_location":null,
-        "delivery_required":false,
-        "deadline":"today"
+    "text": "pls come wash my hair tomorrow morning, you go make am too",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "tomorrow morning",
+      "confidence": 1.0,
+      "missing": []
     }
   },
   {
-    "text":"make person come help me go market tomorrow morning,i go send you list",
-    "expected":{
-        "task_type":"shopping",
-        "items":[],
-        "pickup_location": "Slaughter",
-        "delivery_required":true,
-        "deadline":"tomorrow morning"
+    "text": "make person come help me go market tomorrow morning,i go send you list",
+    "expected": {
+      "task_type": "shopping",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": "tomorrow morning",
+      "confidence": 0.5,
+      "missing": [
+        "items",
+        "pickup_location"
+      ]
     }
   },
   {
-    "text":"light no dey enter my house,the phase don blow i need electrician",
-    "expected":{
-        "task_type":"electrical",
-        "items":[],
-        "pickup_location":null,
-        "delivery_required":false,
-        "deadline":"before 5pm"
+    "text": "light no dey enter my house,the phase don blow i need electrician",
+    "expected": {
+      "task_type": "repair",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
     }
   },
   {
-    "text":"Need someone to proffessionally edit my videos",
-    "expected":{
-        "task_type":"Video editing",
-        "items":[],
-        "pickup_location":null,
-        "delivery_required":false,
-        "deadline":"3 days"
+    "text": "Need someone to proffessionally edit my videos",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
     }
   },
   {
-    "text":"Someone to pickup a parcel for me,around waterlines",
-    "expected":{
-        "task_type":"delivery",
-        "items": [{"name": "parcel", "quantity": 6, "unit": null}],
-        "pickup_location":"Waterlines",
-        "delivery_required":true,
-        "deadline":"friday afternoon"
+    "text": "Someone to pickup a parcel for me,around waterlines",
+    "expected": {
+      "task_type": "delivery",
+      "items": [
+        {
+          "name": "parcel",
+          "quantity": 1,
+          "unit": null
+        }
+      ],
+      "pickup_location": "Waterlines",
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": null,
+      "confidence": 0.5,
+      "missing": [
+        "dropoff_location",
+        "deadline"
+      ]
+    }
+  },
+  {
+    "text": "Need someone to clean my 2 bedroom flat on saturday",
+    "expected": {
+      "task_type": "cleaning",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "saturday",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "my compound is dirty abeg send person to sweep and wash am",
+    "expected": {
+      "task_type": "cleaning",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
+    }
+  },
+  {
+    "text": "Please wash and iron my clothes and bring them back to me by Thursday",
+    "expected": {
+      "task_type": "laundry",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": "thursday",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "Abeg buy two crates of eggs and one bag of rice for me from Mile 3 before 4pm",
+    "expected": {
+      "task_type": "shopping",
+      "items": [
+        {
+          "name": "eggs",
+          "quantity": 2,
+          "unit": "crates"
+        },
+        {
+          "name": "rice",
+          "quantity": 1,
+          "unit": "bag"
+        }
+      ],
+      "pickup_location": "Mile 3",
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": "before 4pm",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "I need help with something",
+    "expected": {
+      "task_type": "other",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.5,
+      "missing": [
+        "task_type",
+        "deadline"
+      ]
     }
   }
 ]
