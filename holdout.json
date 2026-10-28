@@ -10,13 +10,13 @@
           "unit": null
         }
       ],
-      "pickup_location": null,
+      "pickup_location": "the market",
       "dropoff_location": null,
       "delivery_required": true,
       "deadline": "this evening",
       "confidence": 0.75,
       "missing": [
-        "pickup_location"
+        "dropoff_location"
       ]
     }
   },
@@ -72,13 +72,12 @@
           "unit": "cartons"
         }
       ],
-      "pickup_location": null,
+      "pickup_location": "the park",
       "dropoff_location": null,
       "delivery_required": true,
       "deadline": "this afternoon",
-      "confidence": 0.5,
+      "confidence": 0.75,
       "missing": [
-        "pickup_location",
         "dropoff_location"
       ]
     }
@@ -99,35 +98,81 @@
     }
   },
   {
-    "text": "Someone to come and clean my office thoroughly tuesday morning",
+    "text": "Please buy two bags of rice from Mile 3 market and deliver to Rumuola by 5pm",
+    "expected": {
+      "task_type": "shopping",
+      "items": [
+        {
+          "name": "rice",
+          "quantity": 2,
+          "unit": "bags"
+        }
+      ],
+      "pickup_location": "Mile 3 market",
+      "dropoff_location": "Rumuola",
+      "delivery_required": true,
+      "deadline": "by 5pm",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "abeg buy some tomatoes and pepper for me tomorrow",
+    "expected": {
+      "task_type": "shopping",
+      "items": [
+        {
+          "name": "tomatoes",
+          "quantity": null,
+          "unit": null
+        },
+        {
+          "name": "pepper",
+          "quantity": null,
+          "unit": null
+        }
+      ],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": true,
+      "deadline": "tomorrow",
+      "confidence": 0.5,
+      "missing": [
+        "pickup_location",
+        "dropoff_location"
+      ]
+    }
+  },
+  {
+    "text": "pls i nid a clener 4 my 2 bedrom flat sat mrng",
     "expected": {
       "task_type": "cleaning",
       "items": [],
       "pickup_location": null,
       "dropoff_location": null,
       "delivery_required": false,
-      "deadline": "tuesday morning",
+      "deadline": "sat mrng",
       "confidence": 1.0,
       "missing": []
     }
   },
   {
-    "text": "pls my toilet is leaking,i need a plumber today",
+    "text": "pls wash my clothes and also clean my kitchen friday morning",
     "expected": {
-      "task_type": "repair",
+      "task_type": "laundry",
       "items": [],
       "pickup_location": null,
       "dropoff_location": null,
       "delivery_required": false,
-      "deadline": "today",
+      "deadline": "friday morning",
       "confidence": 1.0,
       "missing": []
     }
   },
   {
-    "text": "person wey go wash curtain for me,e plenty sha",
+    "text": "hello good morning",
     "expected": {
-      "task_type": "laundry",
+      "task_type": "other",
       "items": [],
       "pickup_location": null,
       "dropoff_location": null,
@@ -140,7 +185,107 @@
     }
   },
   {
-    "text": "My bus just broke down on third mainland bridge",
+    "text": "need a plumber next week, my bathroom sink is blocked",
+    "expected": {
+      "task_type": "repair",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "next week",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "abeg carry 3 bags of cement from Garrison go Eleme tonight",
+    "expected": {
+      "task_type": "delivery",
+      "items": [
+        {
+          "name": "cement",
+          "quantity": 3,
+          "unit": "bags"
+        }
+      ],
+      "pickup_location": "Garrison",
+      "dropoff_location": "Eleme",
+      "delivery_required": true,
+      "deadline": "tonight",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "Pls can someone wash my duvet and iron it before saturday",
+    "expected": {
+      "task_type": "laundry",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": "before saturday",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "get me a dozen eggs from the shop and deliver to Rumuola tomorrow morning",
+    "expected": {
+      "task_type": "shopping",
+      "items": [
+        {
+          "name": "eggs",
+          "quantity": 12,
+          "unit": null
+        }
+      ],
+      "pickup_location": "the shop",
+      "dropoff_location": "Rumuola",
+      "delivery_required": true,
+      "deadline": "tomorrow morning",
+      "confidence": 1.0,
+      "missing": []
+    }
+  },
+  {
+    "text": "Someone to clean my shop",
+    "expected": {
+      "task_type": "cleaning",
+      "items": [],
+      "pickup_location": null,
+      "dropoff_location": null,
+      "delivery_required": false,
+      "deadline": null,
+      "confidence": 0.75,
+      "missing": [
+        "deadline"
+      ]
+    }
+  },
+  {
+    "text": "take this package to my sister in Trans Amadi urgently",
+    "expected": {
+      "task_type": "delivery",
+      "items": [
+        {
+          "name": "package",
+          "quantity": null,
+          "unit": null
+        }
+      ],
+      "pickup_location": null,
+      "dropoff_location": "Trans Amadi",
+      "delivery_required": true,
+      "deadline": "urgently",
+      "confidence": 0.75,
+      "missing": [
+        "pickup_location"
+      ]
+    }
+  },
+  {
+    "text": "can I get a refund for my last order",
     "expected": {
       "task_type": "other",
       "items": [],

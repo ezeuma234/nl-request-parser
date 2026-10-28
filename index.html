@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request Parser</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#1f2328;--muted:#6b7280;--line:#e3e1d9;--accent:#0f6b5c;--warn:#b45309;--warnbg:#fef3c7}
+@media(prefers-color-scheme:dark){:root{--bg:#14161a;--card:#1c1f25;--ink:#e8e8e6;--muted:#9aa0a6;--line:#2c3038;--accent:#5fc9b4;--warn:#fbbf24;--warnbg:#3a2f12}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.6rem;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 24px}
+textarea{width:100%;min-height:96px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:inherit;font:inherit;resize:vertical}
+textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+button{font:inherit;cursor:pointer;border-radius:8px}
+#go{background:var(--accent);color:var(--bg);border:0;padding:10px 20px;font-weight:600}
+#go:disabled{opacity:.6;cursor:wait}
+.chip{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:5px 12px;font-size:.85rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-top:20px}
+dl{display:grid;grid-template-columns:140px 1fr;gap:10px 16px;margin:0 0 12px}
+dt{color:var(--muted)}
+dd{margin:0}
+.muted{color:var(--muted)}
+.tag{display:inline-block;background:var(--warnbg);color:var(--warn);border-radius:6px;padding:1px 8px;font-size:.8rem;margin:0 6px 4px 0}
+.badge{background:var(--accent);color:var(--bg);border-radius:6px;padding:2px 10px;font-weight:600}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.err{color:var(--warn);margin-top:12px}
+pre{overflow:auto;font-size:.85rem}
+@media(max-width:520px){dl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Request Parser</h1>
+<p class="sub">Paste a messy customer request and get structured data back.</p>
+<textarea id="text" placeholder="e.g. Abeg buy two crates of eggs from Mile 3 before 4pm"></textarea>
+<div class="row"><button id="go">Parse</button><span class="muted">or press Ctrl + Enter</span></div>
+<div class="row" id="examples"></div>
+<p class="err" id="err" role="alert"></p>
+<section class="card" id="out" hidden>
+<dl id="fields"></dl>
+<details><summary class="muted">Raw JSON</summary><pre id="raw"></pre></details>
+</section>
+</main>
+<script>
+const API = ""; // same origin. If this page is hosted elsewhere, put your API URL here.
+const EXAMPLES = [
+  "I need 3 bags of rice from Mile 3 delivered to my house by evening",
+  "Pick up a parcel at Rumuola and drop it at Garrison before 5pm",
+  "my kitchen sink dey leak, need plumber today",
+  "I need help with something"
+];
+const $ = id => document.getElementById(id);
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+function row(label, node) {
+  $("fields").appendChild(el("dt", "", label));
+  const dd = el("dd");
+  dd.appendChild(node);
+  $("fields").appendChild(dd);
+}
+const place = v => el("span", v ? "" : "muted", v || "not found");
+const itemLabel = i => (i.unit
+  ? [i.quantity, i.unit, "of", i.name]
+  : [i.quantity, i.name]).filter(x => x != null).join(" ");
+
+function render(d) {
+  $("fields").textContent = "";
+  row("Task type", el("span", "badge", d.task_type));
+  const items = el("div");
+  if (d.items.length) d.items.forEach(i => items.appendChild(el("div", "", itemLabel(i))));
+  else items.appendChild(el("span", "muted", "none"));
+  row("Items", items);
+  row("Pickup", place(d.pickup_location));
+  row("Dropoff", place(d.dropoff_location));
+  row("Delivery needed", el("span", "", d.delivery_required ? "Yes" : "No"));
+  row("Deadline", place(d.deadline));
+  const pct = Math.round(d.confidence * 100);
+  const conf = el("div");
+  conf.appendChild(el("span", "", pct + "%"));
+  const bar = el("div", "bar");
+  const fill = el("i");
+  fill.style.width = pct + "%";
+  bar.appendChild(fill);
+  conf.appendChild(bar);
+  row("Confidence", conf);
+  const miss = el("div");
+  if (d.missing.length) d.missing.forEach(k => miss.appendChild(el("span", "tag", k.replace(/_/g, " "))));
+  else miss.appendChild(el("span", "muted", "nothing, the request is complete"));
+  row("Still needed", miss);
+  $("raw").textContent = JSON.stringify(d, null, 2);
+  $("out").hidden = false;
+}
+
+async function parse() {
+  const text = $("text").value.trim();
+  $("err").textContent = "";
+  if (!text) { $("err").textContent = "Type a request first."; return; }
+  $("go").disabled = true;
+  $("go").textContent = "Parsing…";
+  try {
+    const res = await fetch(API + "/parse", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    });
+    if (!res.ok) throw new Error("the server answered " + res.status);
+    render(await res.json());
+  } catch (e) {
+    $("out").hidden = true;
+    $("err").textContent = "Could not reach the parser (" + e.message + "). Is the server running?";
+  } finally {
+    $("go").disabled = false;
+    $("go").textContent = "Parse";
+  }
+}
+
+EXAMPLES.forEach(t => {
+  const b = el("button", "chip", t.length > 38 ? t.slice(0, 36) + "…" : t);
+  b.title = t;
+  b.onclick = () => { $("text").value = t; parse(); };
+  $("examples").appendChild(b);
+});
+$("go").onclick = parse;
+$("text").addEventListener("keydown", e => {
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) parse();
+});
+</script>
+</body>
+</html>
