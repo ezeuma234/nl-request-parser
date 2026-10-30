@@ -1,0 +1,16 @@
+{
+  "file": "holdout.json",
+  "run_at": "2026-10-29T13:04:47",
+  "samples": 18,
+  "crashes": 0,
+  "accuracy": {
+    "task_type": 0.6666666666666666,
+    "items": 1.0,
+    "pickup_location": 1.0,
+    "dropoff_location": 0.9444444444444444,
+    "delivery_required": 1.0,
+    "deadline": 1.0,
+    "missing": 0.9444444444444444
+  },
+  "all_fields": 0.6666666666666666
+}

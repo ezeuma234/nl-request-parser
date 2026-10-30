@@ -1,0 +1,16 @@
+{
+  "file": "samples.json",
+  "run_at": "2026-10-28T10:57:32",
+  "samples": 21,
+  "crashes": 0,
+  "accuracy": {
+    "task_type": 1.0,
+    "items": 1.0,
+    "pickup_location": 1.0,
+    "dropoff_location": 1.0,
+    "delivery_required": 1.0,
+    "deadline": 1.0,
+    "missing": 1.0
+  },
+  "all_fields": 1.0
+}
