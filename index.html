@@ -1,137 +1,546 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Request Parser</title>
+<meta name="theme-color" content="#10251e">
+<meta name="description" content="Turn everyday errand requests into structured, actionable information.">
+<title>ErrandIQ — Request Parser</title>
 <style>
-:root{--bg:#f7f6f2;--card:#fff;--ink:#1f2328;--muted:#6b7280;--line:#e3e1d9;--accent:#0f6b5c;--warn:#b45309;--warnbg:#fef3c7}
-@media(prefers-color-scheme:dark){:root{--bg:#14161a;--card:#1c1f25;--ink:#e8e8e6;--muted:#9aa0a6;--line:#2c3038;--accent:#5fc9b4;--warn:#fbbf24;--warnbg:#3a2f12}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
-h1{font-size:1.6rem;margin:0 0 4px}
-.sub{color:var(--muted);margin:0 0 24px}
-textarea{width:100%;min-height:96px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:inherit;font:inherit;resize:vertical}
-textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
-button{font:inherit;cursor:pointer;border-radius:8px}
-#go{background:var(--accent);color:var(--bg);border:0;padding:10px 20px;font-weight:600}
-#go:disabled{opacity:.6;cursor:wait}
-.chip{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:5px 12px;font-size:.85rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-top:20px}
-dl{display:grid;grid-template-columns:140px 1fr;gap:10px 16px;margin:0 0 12px}
-dt{color:var(--muted)}
-dd{margin:0}
-.muted{color:var(--muted)}
-.tag{display:inline-block;background:var(--warnbg);color:var(--warn);border-radius:6px;padding:1px 8px;font-size:.8rem;margin:0 6px 4px 0}
-.badge{background:var(--accent);color:var(--bg);border-radius:6px;padding:2px 10px;font-weight:600}
-.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
-.bar i{display:block;height:100%;background:var(--accent)}
-.err{color:var(--warn);margin-top:12px}
-pre{overflow:auto;font-size:.85rem}
-@media(max-width:520px){dl{grid-template-columns:1fr}}
+:root {
+  color-scheme: light;
+  --bg: #f5f7f4;
+  --surface: #ffffff;
+  --ink: #18251e;
+  --muted: #718078;
+  --line: #e1e8e2;
+  --green: #176b4b;
+  --green-dark: #10251e;
+  --green-light: #e8f4ec;
+  --amber: #875713;
+  --amber-light: #fff4dc;
+  --red: #a63838;
+  --radius: 18px;
+  --shadow: 0 12px 35px rgba(20, 45, 31, .06);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+button, textarea { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, textarea:focus-visible {
+  outline: 3px solid #85c8a2;
+  outline-offset: 3px;
+}
+.topbar {
+  background: var(--green-dark);
+  color: white;
+  padding: 17px 24px;
+}
+.nav {
+  max-width: 1080px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 11px; }
+.brand-icon {
+  display: grid; place-items: center;
+  width: 39px; height: 39px;
+  border-radius: 12px;
+  background: #d6f0df; color: #12442e;
+  font-size: 21px; font-weight: 800;
+}
+.brand-name { font-size: 18px; font-weight: 750; letter-spacing: -.5px; }
+.brand-sub { color: #b9cdc0; font-size: 12px; }
+.status {
+  display: flex; align-items: center; gap: 8px;
+  color: #d2e9d9; font-size: 12px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #75d69b; }
+main { max-width: 1080px; margin: 0 auto; padding: 48px 22px 70px; }
+.hero { max-width: 690px; margin-bottom: 30px; }
+.eyebrow {
+  color: var(--green); font-weight: 750;
+  font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase;
+}
+h1 {
+  margin: 9px 0 12px;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.12; letter-spacing: -1.8px;
+}
+.hero p { margin: 0; color: var(--muted); font-size: 16px; max-width: 580px; }
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: 22px; align-items: start;
+}
+.panel {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  overflow: hidden; min-width: 0;
+}
+.panel-head {
+  padding: 21px 23px 17px;
+  border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.panel-head h2 { margin: 0; font-size: 16px; letter-spacing: -.3px; }
+.step {
+  font-size: 11px; font-weight: 750; color: var(--green);
+  background: var(--green-light); border-radius: 8px; padding: 5px 9px;
+}
+.panel-body { padding: 22px 23px; }
+.helper { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+textarea {
+  display: block; width: 100%; min-height: 165px; resize: vertical;
+  padding: 15px; border: 1px solid #d6e0d8; border-radius: 12px;
+  background: #fbfcfa; color: var(--ink); line-height: 1.65;
+}
+textarea::placeholder { color: #9aa79e; }
+textarea:focus { border-color: var(--green); }
+.text-meta {
+  display: flex; justify-content: space-between; gap: 12px;
+  color: var(--muted); font-size: 11px; margin-top: 7px;
+}
+.label {
+  font-size: 12px; font-weight: 750; display: block; margin: 22px 0 10px;
+}
+.examples { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px;
+  background: white; color: #45574b; text-align: left; font-size: 12px;
+}
+.chip:hover { background: var(--green-light); border-color: #b5d7c0; }
+.actions { display: flex; gap: 10px; margin-top: 22px; }
+.primary, .secondary {
+  border-radius: 10px; padding: 11px 16px; font-weight: 700;
+}
+.primary {
+  flex: 1; border: 1px solid var(--green); background: var(--green); color: white;
+}
+.primary:hover { background: #10553b; }
+.primary:disabled { opacity: .65; cursor: wait; }
+.secondary { border: 1px solid var(--line); background: white; color: var(--ink); }
+.secondary:hover { background: #f4f7f4; }
+.error {
+  color: var(--red); background: #fff0f0; padding: 11px 12px;
+  border-radius: 9px; margin-top: 15px; font-size: 13px;
+}
+[hidden] { display: none !important; }
+.empty-state { padding: 46px 24px; text-align: center; }
+.empty-icon {
+  display: grid; place-items: center; width: 56px; height: 56px;
+  margin: 0 auto 15px; border-radius: 17px;
+  background: var(--green-light); color: var(--green); font-size: 25px;
+}
+.empty-state h3 { font-size: 16px; margin: 0 0 7px; }
+.empty-state p { color: var(--muted); font-size: 13px; max-width: 255px; margin: auto; }
+.result-content { padding: 20px 23px; }
+.result-status {
+  padding: 12px 14px; border-radius: 11px; margin-bottom: 19px;
+  display: flex; gap: 10px; align-items: flex-start;
+  background: var(--green-light); color: #245b3d; font-size: 12px;
+}
+.result-status.warn { background: var(--amber-light); color: var(--amber); }
+.result-status strong { display: block; margin-bottom: 2px; }
+.result-status span { display: block; }
+.result-title {
+  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--muted); font-weight: 800; margin: 18px 0 10px;
+}
+.task-pill {
+  display: inline-block; padding: 5px 10px; border-radius: 8px;
+  background: var(--green-dark); color: white; font-weight: 700;
+  font-size: 12px; text-transform: capitalize;
+}
+.data-list { display: grid; gap: 0; }
+.data-row {
+  display: grid; grid-template-columns: 125px minmax(0, 1fr);
+  gap: 12px; padding: 12px 0; border-bottom: 1px solid #edf0ed;
+}
+.data-row:last-child { border-bottom: 0; }
+.data-label { color: var(--muted); font-size: 12px; }
+.data-value { font-size: 13px; overflow-wrap: anywhere; }
+.item-line { margin-bottom: 5px; }
+.item-line:last-child { margin-bottom: 0; }
+.not-found { color: var(--amber); font-style: italic; }
+.missing-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.missing-tag {
+  background: var(--amber-light); color: var(--amber);
+  padding: 4px 9px; border-radius: 7px; font-size: 11px;
+}
+.confidence-head { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+.confidence-head strong { color: var(--green); }
+.bar { height: 7px; border-radius: 20px; background: #e9eee9; overflow: hidden; margin-top: 9px; }
+.bar-fill { height: 100%; background: #2a9b63; border-radius: 20px; transition: width .3s; }
+.result-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 21px; }
+.result-actions button { font-size: 12px; }
+details { border-top: 1px solid var(--line); padding: 14px 23px; }
+summary { cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 650; }
+pre {
+  white-space: pre-wrap; overflow-wrap: anywhere; max-height: 250px;
+  overflow: auto; padding: 12px; border-radius: 9px;
+  background: #f5f7f4; font-size: 11px;
+}
+footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+@media (max-width: 760px) {
+  main { padding: 32px 15px 45px; }
+  .layout { grid-template-columns: 1fr; }
+  .hero { margin-bottom: 23px; }
+  .topbar { padding: 14px 16px; }
+}
+@media (max-width: 420px) {
+  .panel-head, .panel-body, .result-content { padding-left: 16px; padding-right: 16px; }
+  .data-row { grid-template-columns: 100px minmax(0, 1fr); gap: 9px; }
+  .status { font-size: 0; gap: 0; }
+  .status .dot { width: 9px; height: 9px; }
+}
 </style>
 </head>
 <body>
+<header class="topbar">
+  <div class="nav">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">E</div>
+      <div>
+        <div class="brand-name">ErrandIQ</div>
+        <div class="brand-sub">Natural-language request parser</div>
+      </div>
+    </div>
+    <div class="status"><span class="dot"></span>&nbsp; Parser service</div>
+  </div>
+</header>
+
 <main>
-<h1>Request Parser</h1>
-<p class="sub">Paste a messy customer request and get structured data back.</p>
-<textarea id="text" placeholder="e.g. Abeg buy two crates of eggs from Mile 3 before 4pm"></textarea>
-<div class="row"><button id="go">Parse</button><span class="muted">or press Ctrl + Enter</span></div>
-<div class="row" id="examples"></div>
-<p class="err" id="err" role="alert"></p>
-<section class="card" id="out" hidden>
-<dl id="fields"></dl>
-<details><summary class="muted">Raw JSON</summary><pre id="raw"></pre></details>
-</section>
+  <section class="hero">
+    <div class="eyebrow">From words to structured data</div>
+    <h1>Make every request<br>clear and actionable.</h1>
+    <p>Turn everyday errand requests into organised information. Enter a request and let the parser identify the task, items, locations, deadline and missing details.</p>
+  </section>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Describe your request</h2>
+        <span class="step">STEP 01</span>
+      </div>
+      <div class="panel-body">
+        <p class="helper">Write naturally. Include as much detail as you know.</p>
+        <textarea id="request" maxlength="2000" aria-label="Your errand request" placeholder="e.g. Abeg, buy 2 crates of eggs from Mile 3 and bring them to Rumuola before 4pm..."></textarea>
+        <div class="text-meta">
+          <span>Be as specific as possible</span>
+          <span id="counter">0 / 2000</span>
+        </div>
+
+        <span class="label">Try an example</span>
+        <div class="examples" id="examples">
+          <button class="chip" type="button" data-text="I need 3 bags of rice from Mile 3 delivered to my house by evening">Shopping request</button>
+          <button class="chip" type="button" data-text="Pick up a parcel at Rumuola and drop it at Garrison before 5pm">Parcel delivery</button>
+          <button class="chip" type="button" data-text="My kitchen sink dey leak, I need a plumber today">Home repair</button>
+          <button class="chip" type="button" data-text="I need help with something">Vague request</button>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="parseBtn" type="button">Parse request &nbsp; →</button>
+          <button class="secondary" id="clearBtn" type="button">Clear</button>
+        </div>
+        <div class="error" id="error" role="alert" hidden></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-live="polite">
+      <div class="panel-head">
+        <h2>Parsed results</h2>
+        <span class="step">STEP 02</span>
+      </div>
+
+      <div class="empty-state" id="empty">
+        <div class="empty-icon" aria-hidden="true">✳</div>
+        <h3>Your results will appear here</h3>
+        <p>Enter a request and select Parse to see the structured information.</p>
+      </div>
+
+      <div class="result-content" id="results" hidden>
+        <div class="result-status" id="resultStatus">
+          <div aria-hidden="true">●</div>
+          <div><strong id="statusTitle">Parsing complete</strong><span id="statusMessage"></span></div>
+        </div>
+
+        <div class="result-title">Task classification</div>
+        <div><span class="task-pill" id="taskType">Unknown</span></div>
+
+        <div class="result-title">Extracted information</div>
+        <div class="data-list" id="dataList"></div>
+
+        <div class="result-title">Confidence score</div>
+        <div class="confidence-head"><span>Parser confidence</span><strong id="confidenceText">—</strong></div>
+        <div class="bar"><div class="bar-fill" id="confidenceBar" style="width:0%"></div></div>
+
+        <div class="result-title">Details to check</div>
+        <div class="missing-list" id="missingList"></div>
+
+        <div class="result-actions">
+          <button class="secondary" id="copyBtn" type="button">Copy results</button>
+          <button class="secondary" id="copyJsonBtn" type="button">Copy JSON</button>
+        </div>
+      </div>
+
+      <details id="rawDetails" hidden>
+        <summary>View raw JSON response</summary>
+        <pre id="rawJson"></pre>
+      </details>
+    </section>
+  </div>
+
+  <footer>ErrandIQ · A natural-language parsing demo · Built with FastAPI and Python</footer>
 </main>
+
 <script>
-const API = ""; // same origin. If this page is hosted elsewhere, put your API URL here.
-const EXAMPLES = [
-  "I need 3 bags of rice from Mile 3 delivered to my house by evening",
-  "Pick up a parcel at Rumuola and drop it at Garrison before 5pm",
-  "my kitchen sink dey leak, need plumber today",
-  "I need help with something"
-];
+const API = "";
 const $ = id => document.getElementById(id);
-function el(tag, cls, text) {
-  const n = document.createElement(tag);
-  if (cls) n.className = cls;
-  if (text !== undefined) n.textContent = text;
-  return n;
-}
-function row(label, node) {
-  $("fields").appendChild(el("dt", "", label));
-  const dd = el("dd");
-  dd.appendChild(node);
-  $("fields").appendChild(dd);
-}
-const place = v => el("span", v ? "" : "muted", v || "not found");
-const itemLabel = i => (i.unit
-  ? [i.quantity, i.unit, "of", i.name]
-  : [i.quantity, i.name]).filter(x => x != null).join(" ");
+let lastResult = null;
 
-function render(d) {
-  $("fields").textContent = "";
-  row("Task type", el("span", "badge", d.task_type));
-  const items = el("div");
-  if (d.items.length) d.items.forEach(i => items.appendChild(el("div", "", itemLabel(i))));
-  else items.appendChild(el("span", "muted", "none"));
-  row("Items", items);
-  row("Pickup", place(d.pickup_location));
-  row("Dropoff", place(d.dropoff_location));
-  row("Delivery needed", el("span", "", d.delivery_required ? "Yes" : "No"));
-  row("Deadline", place(d.deadline));
-  const pct = Math.round(d.confidence * 100);
-  const conf = el("div");
-  conf.appendChild(el("span", "", pct + "%"));
-  const bar = el("div", "bar");
-  const fill = el("i");
-  fill.style.width = pct + "%";
-  bar.appendChild(fill);
-  conf.appendChild(bar);
-  row("Confidence", conf);
-  const miss = el("div");
-  if (d.missing.length) d.missing.forEach(k => miss.appendChild(el("span", "tag", k.replace(/_/g, " "))));
-  else miss.appendChild(el("span", "muted", "nothing, the request is complete"));
-  row("Still needed", miss);
-  $("raw").textContent = JSON.stringify(d, null, 2);
-  $("out").hidden = false;
+function showError(message) {
+  $("error").textContent = message;
+  $("error").hidden = false;
 }
+function clearError() {
+  $("error").textContent = "";
+  $("error").hidden = true;
+}
+function addRow(label, value, missing = false) {
+  const row = document.createElement("div");
+  row.className = "data-row";
+  const key = document.createElement("div");
+  key.className = "data-label";
+  key.textContent = label;
+  const val = document.createElement("div");
+  val.className = "data-value";
+  if (missing) val.classList.add("not-found");
+  val.textContent = value;
+  row.append(key, val);
+  $("dataList").appendChild(row);
+}
+function displayItems(items) {
+  if (!Array.isArray(items) || items.length === 0) {
+    addRow("Items", "No items detected", true);
+    return;
+  }
+  const lines = items.map(item => {
+    const quantity = item.quantity == null ? "" : String(item.quantity) + " ";
+    const unit = item.unit ? item.unit + " of " : "";
+    return quantity + unit + (item.name || "Unnamed item");
+  });
+  addRow("Items", lines.join("\n"));
+  const last = $("dataList").lastElementChild.lastElementChild;
+  last.style.whiteSpace = "pre-line";
+}
+function humanize(value) {
+  return String(value).replace(/_/g, " ");
+}
+function render(data) {
+  lastResult = data;
+  $("dataList").textContent = "";
+  $("missingList").textContent = "";
 
-async function parse() {
-  const text = $("text").value.trim();
-  $("err").textContent = "";
-  if (!text) { $("err").textContent = "Type a request first."; return; }
-  $("go").disabled = true;
-  $("go").textContent = "Parsing…";
+  $("taskType").textContent = humanize(data.task_type || "unknown");
+  displayItems(data.items);
+
+  addRow("Pickup location", data.pickup_location || "Not detected", !data.pickup_location);
+  addRow("Drop-off location", data.dropoff_location || "Not detected", !data.dropoff_location);
+  addRow("Delivery required", data.delivery_required ? "Yes" : "No");
+  addRow("Deadline", data.deadline || "Not specified", !data.deadline);
+
+  const confidence = Number(data.confidence);
+  const validConfidence = Number.isFinite(confidence)
+    ? Math.max(0, Math.min(1, confidence)) : 0;
+  $("confidenceText").textContent = Number.isFinite(confidence)
+    ? Math.round(validConfidence * 100) + "%" : "Unavailable";
+  $("confidenceBar").style.width = Math.round(validConfidence * 100) + "%";
+
+  const missing = Array.isArray(data.missing) ? [...data.missing] : [];
+  // Highlight obvious gaps even if the backend's missing list omitted them.
+  if (data.delivery_required && !data.dropoff_location &&
+      !missing.includes("dropoff_location")) {
+    missing.push("dropoff_location");
+  }
+  if ((!Array.isArray(data.items) || data.items.length === 0) &&
+      !missing.includes("items")) {
+    missing.push("items");
+  }
+
+  if (missing.length) {
+    missing.forEach(field => {
+      const tag = document.createElement("span");
+      tag.className = "missing-tag";
+      tag.textContent = humanize(field);
+      $("missingList").appendChild(tag);
+    });
+    $("resultStatus").classList.add("warn");
+    $("statusTitle").textContent = "Review this request";
+    $("statusMessage").textContent =
+      "Some details are missing or were not detected. Check them before acting on this request.";
+  } else {
+    const tag = document.createElement("span");
+    tag.className = "missing-tag";
+    tag.style.background = "var(--green-light)";
+    tag.style.color = "var(--green)";
+    tag.textContent = "No missing fields reported";
+    $("missingList").appendChild(tag);
+    $("resultStatus").classList.remove("warn");
+    $("statusTitle").textContent = "Parsing complete";
+    $("statusMessage").textContent =
+      "The parser returned its structured result. Review it for accuracy before use.";
+  }
+
+  $("statusMessage").textContent +=
+    " These are automated predictions, not a guarantee of correctness.";
+
+  $("rawJson").textContent = JSON.stringify(data, null, 2);
+  $("empty").hidden = true;
+  $("results").hidden = false;
+  $("rawDetails").hidden = false;
+}
+async function parseRequest() {
+  const text = $("request").value.trim();
+  clearError();
+
+  if (!text) {
+    showError("Enter a request first, or select one of the examples.");
+    $("request").focus();
+    return;
+  }
+  if (text.length > 2000) {
+    showError("Your request is too long. Keep it under 2,000 characters.");
+    return;
+  }
+
+  const button = $("parseBtn");
+  button.disabled = true;
+  button.textContent = "Parsing…";
+
   try {
-    const res = await fetch(API + "/parse", {
+    const response = await fetch(API + "/parse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text })
     });
-    if (!res.ok) throw new Error("the server answered " + res.status);
-    render(await res.json());
-  } catch (e) {
-    $("out").hidden = true;
-    $("err").textContent = "Could not reach the parser (" + e.message + "). Is the server running?";
+
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("The server returned an unreadable response.");
+    }
+
+    if (!response.ok) {
+      const detail = typeof data.detail === "string"
+        ? data.detail : "The server returned HTTP " + response.status + ".";
+      throw new Error(detail);
+    }
+    if (!data || typeof data !== "object" || !("task_type" in data)) {
+      throw new Error("The server response did not match the expected format.");
+    }
+    render(data);
+  } catch (error) {
+    showError(
+      error instanceof TypeError
+        ? "Could not connect to the parser. Check your connection and try again."
+        : error.message || "Something went wrong. Please try again."
+    );
   } finally {
-    $("go").disabled = false;
-    $("go").textContent = "Parse";
+    button.disabled = false;
+    button.textContent = "Parse request  →";
   }
 }
 
-EXAMPLES.forEach(t => {
-  const b = el("button", "chip", t.length > 38 ? t.slice(0, 36) + "…" : t);
-  b.title = t;
-  b.onclick = () => { $("text").value = t; parse(); };
-  $("examples").appendChild(b);
+$("parseBtn").addEventListener("click", parseRequest);
+$("request").addEventListener("input", () => {
+  $("counter").textContent = $("request").value.length + " / 2000";
+  clearError();
 });
-$("go").onclick = parse;
-$("text").addEventListener("keydown", e => {
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) parse();
+$("request").addEventListener("keydown", event => {
+  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+    parseRequest();
+  }
+});
+$("examples").addEventListener("click", event => {
+  const button = event.target.closest("button[data-text]");
+  if (!button) return;
+  $("request").value = button.dataset.text;
+  $("counter").textContent = $("request").value.length + " / 2000";
+  clearError();
+  parseRequest();
+});
+$("clearBtn").addEventListener("click", () => {
+  $("request").value = "";
+  $("counter").textContent = "0 / 2000";
+  clearError();
+  lastResult = null;
+  $("results").hidden = true;
+  $("rawDetails").hidden = true;
+  $("empty").hidden = false;
+  $("request").focus();
+});
+
+function resultSummary(data) {
+  return [
+    "ErrandIQ — Parsed Request",
+    "Task type: " + (data.task_type || "unknown"),
+    "Items: " + ((data.items || []).map(i =>
+      [i.quantity, i.unit, i.name].filter(v => v != null && v !== "").join(" ")
+    ).join(", ") || "None detected"),
+    "Pickup: " + (data.pickup_location || "Not detected"),
+    "Drop-off: " + (data.dropoff_location || "Not detected"),
+    "Delivery required: " + (data.delivery_required ? "Yes" : "No"),
+    "Deadline: " + (data.deadline || "Not specified"),
+    "Confidence: " + (Number.isFinite(Number(data.confidence))
+      ? Math.round(Number(data.confidence) * 100) + "%" : "Unavailable"),
+    "Missing fields: " + ((data.missing || []).join(", ") || "None reported"),
+    "",
+    "Note: Automatically extracted information should be checked for accuracy."
+  ].join("\n");
+}
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const temporary = document.createElement("textarea");
+      temporary.value = text;
+      temporary.style.position = "fixed";
+      temporary.style.opacity = "0";
+      document.body.appendChild(temporary);
+      temporary.select();
+      const copied = document.execCommand("copy");
+      temporary.remove();
+      if (!copied) throw new Error("Copy failed");
+    }
+    return true;
+  } catch {
+    showError("Copy was blocked by the browser. You can select and copy the displayed JSON manually.");
+    return false;
+  }
+}
+$("copyBtn").addEventListener("click", async () => {
+  if (lastResult && await copyText(resultSummary(lastResult))) {
+    $("copyBtn").textContent = "Copied!";
+    setTimeout(() => { $("copyBtn").textContent = "Copy results"; }, 1500);
+  }
+});
+$("copyJsonBtn").addEventListener("click", async () => {
+  if (lastResult && await copyText(JSON.stringify(lastResult, null, 2))) {
+    $("copyJsonBtn").textContent = "Copied!";
+    setTimeout(() => { $("copyJsonBtn").textContent = "Copy JSON"; }, 1500);
+  }
 });
 </script>
 </body>
